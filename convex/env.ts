@@ -4,3 +4,6 @@ export const HOST_URL = process.env.HOST_URL;
 export const SITE_URL = process.env.SITE_URL;
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+export const WORKOS_API_KEY = process.env.WORKOS_API_KEY;
+export const WORKOS_CLIENT_ID = process.env.WORKOS_CLIENT_ID;
+export const WORKOS_WEBHOOK_SECRET = process.env.WORKOS_WEBHOOK_SECRET;

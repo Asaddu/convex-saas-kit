@@ -1,10 +1,10 @@
 {
-  "name": "convex-saas",
+  "name": "workos-tanstack-kit",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "start": "npm run dev",
+    "start": "pnpm run dev",
     "dev": "npm-run-all --parallel dev:frontend dev:backend",
     "dev:frontend": "vite",
     "dev:backend": "convex dev",
@@ -28,6 +28,7 @@
     "@tanstack/react-query": "^5.51.15",
     "@tanstack/react-router": "^1.45.11",
     "@tanstack/zod-form-adapter": "^0.26.4",
+    "@workos-inc/node": "^4.0.0",
     "@xixixao/uploadstuff": "^0.0.5",
     "class-variance-authority": "^0.7.0",
     "convex": "^1.13.2",
@@ -72,4 +73,4 @@
     "typescript-eslint": "^7.17.0",
     "vite": "^5.3.4"
   }
-}
+} 

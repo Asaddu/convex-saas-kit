@@ -44,19 +44,33 @@ const pricesValidator = v.object({
 const schema = defineSchema({
   ...authTables,
   users: defineTable({
+    tokenIdentifier: v.string(),
     name: v.optional(v.string()),
     username: v.optional(v.string()),
     imageId: v.optional(v.id("_storage")),
     image: v.optional(v.string()),
+    pictureUrl: v.optional(v.string()),
     email: v.optional(v.string()),
     emailVerificationTime: v.optional(v.number()),
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
     customerId: v.optional(v.string()),
+    organizationId: v.optional(v.id("organizations")),
   })
+    .index("tokenIdentifier", ["tokenIdentifier"])
     .index("email", ["email"])
-    .index("customerId", ["customerId"]),
+    .index("customerId", ["customerId"])
+    .index("organizationId", ["organizationId"]),
+  organizations: defineTable({
+    name: v.string(),
+    domain: v.optional(v.string()),
+    workosId: v.string(),
+    createdAt: v.string(),
+    logoUrl: v.optional(v.string()),
+  })
+    .index("workosId", ["workosId"])
+    .index("domain", ["domain"]),
   plans: defineTable({
     key: planKeyValidator,
     stripeId: v.string(),

@@ -4,8 +4,9 @@ import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { router } from "@/router";
-import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import { ConvexProvider } from "convex/react";
 import "@/i18n";
+import { WorkOSProvider } from "@/components/WorkOSProvider";
 
 // Convex client
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -31,11 +32,13 @@ const helmetContext = {};
 export default function App() {
   return (
     <HelmetProvider context={helmetContext}>
-      <ConvexAuthProvider client={convex}>
+      <ConvexProvider client={convex}>
         <QueryClientProvider client={queryClient}>
-          <InnerApp />
+          <WorkOSProvider>
+            <InnerApp />
+          </WorkOSProvider>
         </QueryClientProvider>
-      </ConvexAuthProvider>
+      </ConvexProvider>
     </HelmetProvider>
   );
 }

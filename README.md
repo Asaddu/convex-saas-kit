@@ -1,57 +1,107 @@
-<h1 align="center">
-  Convex SaaS
-</h1>
+# WorkOS TanStack Kit
 
-<div align="center">
-  <p>
-  A production-ready Convex Stack for your next SaaS application with Stripe integration, TanStack, Resend, Tailwindcss, and shadcn.
-  </p>
-</div>
+A production-ready template for building SaaS applications with [Convex](https://convex.dev), [TanStack](https://tanstack.com), and [WorkOS](https://workos.com) authentication. This template provides everything you need to start building a modern SaaS application with:
 
-<div align="center">
-    <a href="https://convex-saas.netlify.app">Live Demo</a> |  <a href="https://github.com/get-convex/convex-saas/tree/main/docs">Documentation</a>
-  <div align="center"><br>
-  <a href="https://labs.convex.dev/convex-saas"> <img src="https://github.com/get-convex/convex-saas/blob/v1markchanges/public/images/convexsaas.png" alt="convex saas" /></a>
-</div>
-   
-  </p>
-</div>
+- 🔐 **Authentication**: SSO, OAuth, and passwordless auth with WorkOS
+- 🏢 **Organizations**: Multi-tenant support with WorkOS Organizations
+- 💰 **Payments**: Subscription and billing with Stripe
+- 🚀 **Serverless Backend**: Full-stack reactivity with Convex
+- 📊 **Data Fetching**: Efficient querying with TanStack Query
+- 🧭 **Routing**: Type-safe routing with TanStack Router
+- 🎨 **Styling**: Beautiful UI with Tailwind CSS
 
-# Features
+## Features
 
-Features provided out of the box:
-
-- 🧩 **Convex**: A complete, reactive, typesafe backend with authentication and file storage.
-- ⚡ **Vite**: Next-Gen Frontend Tooling.
-- 🛍️ **Stripe**: Subscription Plans, Customer Portal, and more.
-- 🔑 **Authentication**: Email Code and Social Logins.
-- 🎨 **TailwindCSS**: Utility-First CSS Framework.
-- 📐 **ShadCN**: Composable React components.
-- 🌙 **Easy Theming**: Switch between Light and Dark modes with ease.
-- 🗺️ **TanStack Router**: Simple Route Definitions.
-- 📧 **Resend**: Email for Developers.
-- 💌 **React Email**: Customizable Emails with React.
-- 📋 **Conform**: Type-Safe Form Validation based on Web Fundamentals.
-- 📥 **File Uploads**: Profile Picture Uploads with Convex.
-- 🌐 **I18N**: Internationalization for your App.
-- 🧰 **TanStack Development Tools**: Enhanced Development Experience.
-- 💅 **Modern UI**: Carefully crafted UI with a Modern Design System.
-- 🏕 **Custom Pages**: Landing, Onboarding, Dashboard and Admin Pages.
-- 📱 **Responsive**: Works on all devices, from Mobile to Desktop.
--
-
-## [Live Demo](https://convex-saas.netlify.app)
-
-> [!NOTE]
-> Convex SaaS is an Open Source Template that is a direct port of the amazing
-> work of [Daniel Kanem](https://twitter.com/DanielKanem) in [Remix SaaS](https://github.com/dev-xo/remix-saas).
-> As that template does, this one shares common bits of code with: [Indie
-> Stack](https://github.com/remix-run/indie-stack), [Epic
-> Stack](https://github.com/epicweb-dev/epic-stack), [Supa Stripe
-> Stack](https://github.com/rphlmr/supa-stripe-stack), and some other amazing
-> Open Source resources. Check them out, please!
+- Complete authentication flow with WorkOS (Google, GitHub, Microsoft)
+- Organization management
+- User profiles and settings
+- Responsive design
+- Optimized for development and production
+- Built with pnpm for faster, more reliable dependency management
 
 ## Getting Started
 
-Check out the [Getting Started Documentation](https://github.com/get-convex/convex-saas/tree/main/docs) to get up
-and running.
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [pnpm](https://pnpm.io/installation) (v8 or higher)
+- [Convex](https://docs.convex.dev/quickstart) account
+- [WorkOS](https://workos.com/) account
+- [Stripe](https://stripe.com/) account (optional, for payments)
+
+### Installation
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/yourusername/workos-tanstack-kit.git
+cd workos-tanstack-kit
+```
+
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+3. Create a `.env.local` file in the root directory:
+
+```
+# Convex
+CONVEX_DEPLOYMENT=dev:your-deployment-id # Get this from Convex dashboard
+VITE_CONVEX_URL=https://your-deployment-id.convex.cloud # Get this from Convex dashboard
+
+# WorkOS
+WORKOS_API_KEY=your_workos_api_key
+NEXT_PUBLIC_WORKOS_CLIENT_ID=your_workos_client_id
+WORKOS_WEBHOOK_SECRET=your_workos_webhook_secret
+
+# Stripe (Optional)
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+```
+
+4. Set up WorkOS webhook:
+
+- Go to the WorkOS Dashboard > Webhooks
+- Create a new webhook endpoint pointing to `https://your-convex-url/workos-webhook`
+- Copy the signing secret to your `.env.local` file
+
+5. Start the development server:
+
+```bash
+pnpm run dev
+```
+
+## Development
+
+The project uses Convex for the backend and Vite for the frontend. 
+
+- `pnpm run dev` - Starts both the frontend and backend servers concurrently
+- `pnpm run build` - Builds the application for production
+- `pnpm run lint` - Runs the linter
+- `pnpm run typecheck` - Checks types
+
+## Deployment
+
+To deploy your application:
+
+1. Deploy your Convex backend:
+
+```bash
+npx convex deploy
+```
+
+2. Build and deploy your frontend using your preferred hosting service (Netlify, Vercel, etc.):
+
+```bash
+pnpm run build
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

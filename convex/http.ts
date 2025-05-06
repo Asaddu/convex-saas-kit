@@ -3,7 +3,7 @@ import { auth } from "./auth";
 import { ActionCtx, httpAction } from "@cvx/_generated/server";
 import { ERRORS } from "~/errors";
 import { stripe } from "@cvx/stripe";
-import { STRIPE_WEBHOOK_SECRET } from "@cvx/env";
+import { STRIPE_WEBHOOK_SECRET, WORKOS_WEBHOOK_SECRET } from "@cvx/env";
 import { z } from "zod";
 import { internal } from "@cvx/_generated/api";
 import { Currency, Interval, PLANS } from "@cvx/schema";
@@ -13,8 +13,12 @@ import {
 } from "@cvx/email/templates/subscriptionEmail";
 import Stripe from "stripe";
 import { Doc } from "@cvx/_generated/dataModel";
+import WorkOS from "@workos-inc/node";
 
 const http = httpRouter();
+
+// Initialize WorkOS client
+const workos = new WorkOS(process.env.WORKOS_API_KEY);
 
 /**
  * Gets and constructs a Stripe event signature.
@@ -190,6 +194,101 @@ const handleCustomerSubscriptionDeleted = async (
   return new Response(null);
 };
 
+/**
+ * Verify the WorkOS webhook signature
+ */
+async function verifyWorkOSWebhook(request: Request) {
+  if (!WORKOS_WEBHOOK_SECRET) {
+    throw new Error(`WorkOS - ${ERRORS.ENVS_NOT_INITIALIZED}`);
+  }
+
+  const payload = await request.text();
+  const signature = request.headers.get("WorkOS-Signature");
+
+  if (!signature) {
+    throw new Error("WorkOS signature missing");
+  }
+
+  try {
+    const isValid = workos.webhooks.verifyEvent({
+      payload,
+      signatureHeader: signature,
+      secretKey: WORKOS_WEBHOOK_SECRET,
+    });
+
+    if (!isValid) {
+      throw new Error("Invalid WorkOS webhook signature");
+    }
+
+    return JSON.parse(payload);
+  } catch (error) {
+    console.error("WorkOS webhook verification failed:", error);
+    throw error;
+  }
+}
+
+/**
+ * Handle WorkOS webhook events
+ */
+http.route({
+  path: "/workos-webhook",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const event = await verifyWorkOSWebhook(request);
+
+      // Handle different event types
+      switch (event.event) {
+        case "user.created":
+          await ctx.runMutation(internal.workos.handleUserCreated, { 
+            user: event.data 
+          });
+          break;
+        
+        case "user.updated":
+          await ctx.runMutation(internal.workos.handleUserUpdated, { 
+            user: event.data 
+          });
+          break;
+          
+        case "connection.created":
+          await ctx.runMutation(internal.workos.handleConnectionCreated, { 
+            connection: event.data 
+          });
+          break;
+          
+        case "organization.created":
+          await ctx.runMutation(internal.workos.handleOrganizationCreated, { 
+            organization: event.data 
+          });
+          break;
+          
+        case "organization.updated":
+          await ctx.runMutation(internal.workos.handleOrganizationUpdated, { 
+            organization: event.data 
+          });
+          break;
+          
+        case "organization.deleted":
+          await ctx.runMutation(internal.workos.handleOrganizationDeleted, { 
+            organization: event.data 
+          });
+          break;
+          
+        default:
+          console.log(`Unhandled WorkOS event: ${event.event}`);
+      }
+
+      return new Response(null, { status: 200 });
+    } catch (error) {
+      console.error("Error processing WorkOS webhook:", error);
+      return new Response(JSON.stringify({ error: "Invalid webhook" }), {
+        status: 400,
+      });
+    }
+  }),
+});
+
 http.route({
   path: "/stripe/webhook",
   method: "POST",
@@ -214,7 +313,7 @@ http.route({
         }
 
         /**
-         * Occurs whenever a customer’s subscription ends.
+         * Occurs whenever a customer's subscription ends.
          */
         case "customer.subscription.deleted": {
           return handleCustomerSubscriptionDeleted(ctx, event);
